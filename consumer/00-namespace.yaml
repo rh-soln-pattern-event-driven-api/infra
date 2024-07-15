@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: "webhook-system-shipping-consumer"
+    openshift.io/display-name: webhook-system-shipping-consumer
+  name: webhook-system-shipping-consumer
+spec: {}

@@ -1,0 +1,10 @@
+kind: ActiveMQArtemisAddress
+apiVersion: broker.amq.io/v1beta1
+metadata:
+  name: webhook-address
+  namespace: webhook-system-amq-broker
+spec:
+  addressName: webhookQueue
+  queueName: webhookQueue
+  routingType: anycast
+  removeFromBrokerOnDelete: true

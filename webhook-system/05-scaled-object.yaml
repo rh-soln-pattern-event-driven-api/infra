@@ -1,0 +1,48 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: webhook-creator
+spec: 
+  cooldownPeriod: 40
+  idleReplicaCount: 0
+  maxReplicaCount: 10
+  minReplicaCount: 0
+  pollingInterval: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: webhook-creator
+  triggers:
+    - metadata:
+        activationLagThreshold: '0'
+        bootstrapServers: 'my-cluster-kafka-bootstrap.webhook-system-kafka.svc.cluster.local:9092'
+        consumerGroup: order-webhook-creator
+        lagThreshold: '1'
+        offsetResetPolicy: earliest
+        topic: order-created-event
+      type: kafka
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: webhook-dispatcher
+spec:
+  cooldownPeriod: 40
+  idleReplicaCount: 0
+  maxReplicaCount: 20
+  minReplicaCount: 0
+  pollingInterval: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: webhook-dispatcher
+  triggers:
+    - metadata:
+        managementEndpoint: 'broker-hdls-svc.webhook-system-amq-broker.svc.cluster.local:8161'
+        brokerName: amq-broker
+        brokerAddress: webhookQueue
+        queueName: webhookQueue
+        queueLength: '5'
+        username: admin
+        password: admin
+      type: artemis-queue

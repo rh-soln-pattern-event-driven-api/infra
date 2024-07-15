@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: "webhook-system-amq-broker"
+    openshift.io/display-name: webhook-system-amq-broker
+  name: webhook-system-amq-broker
+spec: {}

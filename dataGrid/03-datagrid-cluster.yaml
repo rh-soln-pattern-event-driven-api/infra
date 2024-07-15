@@ -1,0 +1,14 @@
+apiVersion: infinispan.org/v1
+kind: Infinispan
+metadata:
+    name: my-infinispan
+    namespace: webhook-system-data-grid
+spec:
+    service:
+      type: DataGrid
+    security:
+      endpointAuthentication: false
+      endpointEncryption:
+        type: None
+        clientCert: None
+    replicas: 1

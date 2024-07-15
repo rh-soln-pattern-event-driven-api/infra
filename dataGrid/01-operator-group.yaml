@@ -1,0 +1,8 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: "data-grid-operatorgroup"
+  namespace: "webhook-system-data-grid"
+spec:
+  targetNamespaces:
+    - "webhook-system-data-grid"

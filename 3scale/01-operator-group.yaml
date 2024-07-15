@@ -1,0 +1,8 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: 3scale-apim-operatorgroup
+  namespace: webhook-system-3scale
+spec:
+  targetNamespaces:
+  - webhook-system-3scale

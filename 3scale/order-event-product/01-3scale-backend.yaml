@@ -1,0 +1,9 @@
+kind: Backend
+apiVersion: capabilities.3scale.net/v1beta1
+metadata:
+  name: dummy-backend
+  namespace: webhook-system-3scale
+spec:
+  name: Dummy Backend
+  privateBaseURL: 'https://echo-api.3scale.net:443'
+  systemName: dummy-backend

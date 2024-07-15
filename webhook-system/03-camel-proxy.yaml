@@ -1,0 +1,119 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    app.openshift.io/vcs-uri: <<unknown>>
+    app.quarkus.io/quarkus-version: 3.8.4.redhat-00002
+    app.quarkus.io/build-timestamp: 2024-07-09 - 05:51:25 +0000
+  labels:
+    app.kubernetes.io/name: camel-proxy
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/managed-by: quarkus
+    app.openshift.io/runtime: quarkus
+  name: camel-proxy
+spec:
+  ports:
+    - name: http2
+      port: 9443
+      protocol: TCP
+      targetPort: 9443
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: camel-proxy
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.openshift.io/vcs-uri: <<unknown>>
+    app.quarkus.io/quarkus-version: 3.8.4.redhat-00002
+    app.quarkus.io/build-timestamp: 2024-07-09 - 05:51:25 +0000
+  labels:
+    app.kubernetes.io/managed-by: quarkus
+    app.openshift.io/runtime: quarkus
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/name: camel-proxy
+  name: camel-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+      app.kubernetes.io/name: camel-proxy
+  template:
+    metadata:
+      annotations:
+        alpha.image.policy.openshift.io/resolve-names: '*'
+        app.openshift.io/vcs-uri: <<unknown>>
+        app.quarkus.io/quarkus-version: 3.8.4.redhat-00002
+        app.quarkus.io/build-timestamp: 2024-07-09 - 05:51:25 +0000
+      labels:
+        app.kubernetes.io/managed-by: quarkus
+        app.openshift.io/runtime: quarkus
+        app.kubernetes.io/version: 1.0.0-SNAPSHOT
+        app.kubernetes.io/name: camel-proxy
+    spec:
+      containers:
+        - env:
+            - name: JAVA_APP_JAR
+              value: /deployments/quarkus-run.jar
+          image: quay.io/webhooksystem/camel-proxy:V1
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/live
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: camel-proxy
+          ports:
+            - containerPort: 9443
+              name: http2
+              protocol: TCP
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/ready
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          startupProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/started
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          volumeMounts:
+            - mountPath: /etc/ssl/keystore.jks
+              name: http-keystore
+              readOnly: true
+              subPath: keystore.jks
+      volumes:
+        - name: http-keystore
+          secret:
+            defaultMode: 420
+            items:
+              - key: keystore.jks
+                path: keystore.jks
+            optional: false
+            secretName: http-keystore

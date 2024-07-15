@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: "webhook-system-3scale"
+    openshift.io/display-name: webhook-system-3scale
+  name: webhook-system-3scale
+spec: {}

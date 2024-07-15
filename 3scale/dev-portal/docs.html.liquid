@@ -1,0 +1,27 @@
+{% disable_client_cache %}
+
+{% content_for javascripts %}
+    {{ 'active_docs.js' | javascript_include_tag }}
+{% endcontent_for %}
+
+{% assign spec = null %}
+
+<h1>Documentation</h1>
+
+{% for api_spec in provider.api_specs %}
+  {% if api_spec.system_name == 'ordercreatedeventapi' %}
+    {% assign spec = api_spec %}
+  {% endif %}
+{% endfor %}
+<div class="swagger-section">
+  <div id="message-bar" class="swagger-ui-wrap">&nbsp;</div>
+  <div id="swagger-ui-container" class="swagger-ui-wrap"></div>
+</div>
+
+<script type="text/javascript">
+  (function () {
+    var url = "{{spec.url}}";
+     
+    SwaggerUI({ url: url, dom_id: "#swagger-ui-container" }, null);
+  }());
+</script>

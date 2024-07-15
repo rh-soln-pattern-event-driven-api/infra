@@ -1,0 +1,15 @@
+apiVersion: apps.3scale.net/v1alpha1
+kind: APIManager
+metadata:
+  name: apimanager
+  namespace: webhook-system-3scale
+spec:
+  wildcardDomain: apps.cluster-9jnfc.dynamic.redhatworkshops.io
+  tenantName: webhook-apis
+  # Resource requirements disabled for DEMO purposes
+  resourceRequirementsEnabled: false
+  # RWX NFS file storage class name
+  system:
+    fileStorage:
+      persistentVolumeClaim:
+        storageClassName: managed-nfs-storage

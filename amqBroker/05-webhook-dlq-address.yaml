@@ -1,0 +1,10 @@
+kind: ActiveMQArtemisAddress
+apiVersion: broker.amq.io/v1beta1
+metadata:
+  name: webhook-dlq
+  namespace: webhook-system-amq-broker
+spec:
+  addressName: webhookQueueDLQ
+  queueName: webhookQueueDLQ
+  routingType: anycast
+  removeFromBrokerOnDelete: true

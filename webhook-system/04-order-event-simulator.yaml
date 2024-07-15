@@ -1,0 +1,105 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    app.openshift.io/vcs-uri: <<unknown>>
+    app.quarkus.io/quarkus-version: 3.8.4.redhat-00002
+    app.quarkus.io/build-timestamp: 2024-07-04 - 07:10:43 +0000
+  labels:
+    app.kubernetes.io/name: order-event-simulator
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/managed-by: quarkus
+    app.openshift.io/runtime: quarkus
+  name: order-event-simulator
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: order-event-simulator
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  type: ClusterIP
+ 
+ 
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.openshift.io/vcs-uri: <<unknown>>
+    app.quarkus.io/quarkus-version: 3.8.4.redhat-00002
+    app.quarkus.io/build-timestamp: 2024-07-04 - 07:10:43 +0000
+  labels:
+    app.kubernetes.io/managed-by: quarkus
+    app.openshift.io/runtime: quarkus
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/name: order-event-simulator
+  name: order-event-simulator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+      app.kubernetes.io/name: order-event-simulator
+  template:
+    metadata:
+      annotations:
+        alpha.image.policy.openshift.io/resolve-names: '*'
+        app.openshift.io/vcs-uri: <<unknown>>
+        app.quarkus.io/quarkus-version: 3.8.4.redhat-00002
+        app.quarkus.io/build-timestamp: 2024-07-04 - 07:10:43 +0000
+      labels:
+        app.kubernetes.io/managed-by: quarkus
+        app.openshift.io/runtime: quarkus
+        app.kubernetes.io/version: 1.0.0-SNAPSHOT
+        app.kubernetes.io/name: order-event-simulator
+    spec:
+      containers:
+        - env:
+            - name: SMALLRYE_CONFIG_LOCATIONS
+              value: /mnt/app-secret
+            - name: JAVA_APP_JAR
+              value: /deployments/quarkus-run.jar
+          image: quay.io/webhooksystem/order-event-simulator:v1
+          imagePullPolicy: Always
+          name: order-event-simulator
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /mnt/app-secret
+              name: app-secret
+              readOnly: false
+      volumes:
+        - name: app-secret
+          secret:
+            optional: false
+            secretName: order-event-simulator
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    app.openshift.io/vcs-uri: <<unknown>>
+    app.quarkus.io/quarkus-version: 3.8.4.redhat-00002
+    app.quarkus.io/build-timestamp: 2024-07-04 - 07:10:43 +0000
+  labels:
+    app.kubernetes.io/name: order-event-simulator
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/managed-by: quarkus
+    app.openshift.io/runtime: quarkus
+  name: order-event-simulator
+spec:
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: None
+    termination: edge
+  to:
+    kind: Service
+    name: order-event-simulator

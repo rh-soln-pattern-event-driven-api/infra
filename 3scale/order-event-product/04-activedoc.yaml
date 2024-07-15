@@ -1,0 +1,14 @@
+apiVersion: capabilities.3scale.net/v1beta1
+kind: ActiveDoc
+metadata:
+  name: activedoc-order-created-event
+  namespace: webhook-system-3scale
+spec:
+  name: "Order Created Event"
+  productSystemName: ordercreatedevent
+  published: true
+  skipSwaggerValidations: true
+  systemName: ordercreatedeventapi
+  activeDocOpenAPIRef:
+    secretRef:
+      name: order-created-event-openapi

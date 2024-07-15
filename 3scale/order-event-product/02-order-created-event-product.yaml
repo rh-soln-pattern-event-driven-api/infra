@@ -1,0 +1,60 @@
+apiVersion: capabilities.3scale.net/v1beta1
+kind: Product
+metadata:
+  name: order-created-event
+  namespace: webhook-system-3scale
+spec:
+  name: "Order-Created-Event"
+  systemName: ordercreatedevent
+  backendUsages:
+    dummy-backend:
+      path: "/"
+  deployment:
+    apicastHosted:
+      stagingPublicBaseURL: "https://ordercreatedevent-webhook-apis-apicast-staging.apps.cluster-9jnfc.dynamic.redhatworkshops.io"
+      productionPublicBaseURL: "https://ordercreatedevent-webhook-apis-apicast-production.apps.cluster-9jnfc.dynamic.redhatworkshops.io"
+      authentication:
+        userkey:
+          authUserKey: user_key
+          credentials: headers
+  metrics:
+    hits:
+      description: Number of API hits
+      friendlyName: Hits
+      unit: "hit"
+  methods:
+    webhook:
+      friendlyName: webhook
+  mappingRules:
+    - httpMethod: POST
+      pattern: "/"
+      increment: 1
+      metricMethodRef: webhook
+  applicationPlans:
+    basic:
+      name: "Basic notifications"
+      published: true
+      appsRequireApproval: false
+      limits:
+        - period: hour
+          value: 100
+          metricMethodRef:
+            systemName: webhook
+    unlimited:
+      name: "Unlimited notifications"
+      published: true
+      appsRequireApproval: false
+      trialPeriod: 3
+      costMonth: "30"
+  policies:
+    - name: apicast
+      version: builtin
+      enabled: true
+      configuration: {}
+    - name: camel
+      version: builtin
+      enabled: true
+      configuration:
+        all_proxy: http://camel-proxy.webhook-system.svc.cluster.local:9443
+        https_proxy: http://camel-proxy.webhook-system.svc.cluster.local:9443
+        http_proxy: http://camel-proxy.webhook-system.svc.cluster.local:9443

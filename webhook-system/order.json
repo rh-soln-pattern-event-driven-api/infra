@@ -1,0 +1,13 @@
+{
+  "orders" :
+[
+    {
+   "orderId": "1001XYZ",
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "status": "ORDER_CREATED",
+    "accountId": "200345",
+    "createdAt": 1691797320000
+ }
+]
+}
